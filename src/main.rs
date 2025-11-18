@@ -1,3 +1,5 @@
+use std::io::{BufReader, Read};
+
 use clap::Parser;
 use clap_stdin::FileOrStdin;
 
@@ -13,7 +15,14 @@ fn main() {
 
     println!("{args:?}");
 
-    let tmp = args.stdin.contents().unwrap();
+    let reader = BufReader::new(args.stdin.into_reader().unwrap());
 
-    println!("{tmp}");
+    for l in reader.bytes() {
+        let l = l.unwrap();
+
+        println!("{l}");
+        if l == b'q' {
+            break;
+        }
+    }
 }
